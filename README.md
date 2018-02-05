@@ -23,3 +23,4 @@ import poloniex
 polo = poloniex.Poloniex('your-Api-Key-Here-xxxx','yourSecretKeyHere123456789')
 ```
 Neccessary packages: pandas, numpy, crayons, colorama, tkinter, matplotlib
+https://user-images.githubusercontent.com/10981310/35833395-b5d65d48-0ad9-11e8-821b-5416d9e04893.PNG
