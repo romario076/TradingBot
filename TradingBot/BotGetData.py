@@ -13,8 +13,7 @@ class BotGetData(object):
     def __init__(self, pair, peroid):
         self.pair= pair
         self.period= peroid
-        self.conn = Poloniex("HWJ8USAK-LIUIM3IN-WWUYY7WV-PQUB77GF",
-                        "62f50ccb0480dcf340305c2a46cb392f6ab46aaae4ce6bec92791cca5b20e014df98464cfe2e1d4bdc4955924780c0fe7af1a89696ecb6136aecb1243a11905f")
+        self.conn = Poloniex("yourId", "yourKey")
         BotGetData.getHistoricalData(self)
         self.lastPrice= 0
         self.percentChange= 0
