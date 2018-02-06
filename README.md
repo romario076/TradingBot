@@ -10,17 +10,27 @@ Retrives data using poloniex api.
 * Real time messages from exchange and from platform in console.
 
 Easy to change trading logic, avaialable different markets indicators to use in strategy module.
-For using neccesary to have your own id and keu froim poloniex api.
+For using neccesary to have your own id and keн from poloniex api.
+<hr>
 
-## Install latest release:
-Python:
+### Requiremets:
+* python 3.6
+* poloniex
+* tkinter
+* pandas
+* cayons
+* colorama
+
+### Install latest poloniex api release:
 ```
 pip install https://github.com/s4w3d0ff/python-poloniex/archive/v0.4.7.zip
 ```
-## Usage:
+### Usage:
 ```
 import poloniex
 polo = poloniex.Poloniex('your-Api-Key-Here-xxxx','yourSecretKeyHere123456789')
 ```
-Neccessary packages: pandas, numpy, crayons, colorama, tkinter, matplotlib
+<hr>
+### Trading example:
+
 ![alt text](https://user-images.githubusercontent.com/10981310/35833395-b5d65d48-0ad9-11e8-821b-5416d9e04893.PNG)
