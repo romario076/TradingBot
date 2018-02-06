@@ -9,8 +9,8 @@ Retrives data using poloniex api.
 * Trading history storing into csv file.
 * Real time messages from exchange and from platform in console.
 
-Easy to change trading logic, avaialable different markets indicators to use in strategy module.
-For using neccesary to have your own id and keн from poloniex api.
+Easy to change trading logic, available different markets indicators to use in strategy module(botsrategy.py).
+For using neccesary to have your own id and key from poloniex api.
 <hr>
 
 ### Requiremets:
