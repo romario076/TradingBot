@@ -42,9 +42,8 @@ class BotStrategy(object):
     def tick(self, price, startTrade):
         self.currentPrice= price
         self.prices.append(self.currentPrice)
-        #self.movAverage= self.movingAverage(self.prices, self.lengthMA)
         self.movAverage= self.metrics.movingAverage(data=self.prices, period=self.lengthMA)
-        self.expMovAverage = self.metrics.EMA(prices=self.prices, period=12)
+        self.expMovAverage = self.metrics.EMA(prices=self.prices, period=self.lengthMA)
         self.output.log("Price: " + str(round(price, 3)) + "  MA: " + str(round(self.movAverage ,3)) + \
                  "  EMA: "+str(round(self.expMovAverage ,3)))
 
