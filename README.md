@@ -1,6 +1,6 @@
 # Cryptocurrency trading platform
 
-Retrives data using poloniex api.
+Retrieves data using poloniex api.
 
 ### Availble:
 * Control trading sessinon via Start and Stop buttons.
@@ -10,7 +10,7 @@ Retrives data using poloniex api.
 * Real time messages from exchange and from platform in console.
 
 Easy to change trading logic, available different markets indicators to use in strategy module(botsrategy.py).
-For using neccesary to have your own id and key from poloniex api.
+For using neccessary to have your own id and key from poloniex api.
 <hr>
 
 ### Requiremets:
