@@ -515,7 +515,7 @@ class Trading_Gui:
             error= True
         try:
             openPosLimit= int(self.OpenTradesLimit.get())
-            if openPosLimit<0:
+            if openPosLimit<=0:
                 messagebox.showinfo("Error", "Wrong openPosLimit input. Must be integer>0.")
         except:
             messagebox.showinfo("Error", "Wrong openPosLimit input. Must be integer.")
