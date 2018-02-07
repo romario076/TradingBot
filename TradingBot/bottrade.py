@@ -26,8 +26,8 @@ class BotTrade(object):
         self.output.log("Trade closed")
         self.pnl = self.exitPrice - self.entryPrice
 
-        tradeStatus = "Entry Price: " + str(self.entryPrice) + " Status: " + \
-                      str(self.status) + " Exit Price: " + str(self.exitPrice)
+        tradeStatus = "Entry Price: " + str(round(self.entryPrice, 3)) + " Status: " + \
+                      str(self.status) + " Exit Price: " + str(round(self.exitPrice, 3))
         tradeStatus = tradeStatus + " Pnl: " + str(round(self.pnl, 3))
         if (self.pnl>0):
             tradeStatus = crayons.green(tradeStatus)
@@ -44,7 +44,7 @@ class BotTrade(object):
 
     def showStatus(self):
         if (self.status == "OPEN"):
-            tradeStatus = "Entry Price: " + str(self.entryPrice) + " Status: " + str(self.status)
+            tradeStatus = "Entry Price: " + str(round(self.entryPrice, 3)) + " Status: " + str(self.status)
             tradeStatus= crayons.yellow(tradeStatus)
             self.output.log(tradeStatus)
 

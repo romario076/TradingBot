@@ -1,7 +1,5 @@
-import os
-import sys
+
 import pandas as pd
-import numpy as np
 from poloniex import Poloniex
 import time
 import datetime
@@ -13,7 +11,7 @@ class BotGetData(object):
     def __init__(self, pair, peroid):
         self.pair= pair
         self.period= peroid
-        self.conn = Poloniex("yourId", "yourKey")
+        self.conn = Poloniex("YourID", "YourKey")
         BotGetData.getHistoricalData(self)
         self.lastPrice= 0
         self.percentChange= 0

@@ -44,6 +44,14 @@ def chartHorizon(histDataUpdated, interval):
     histDataUpdated= histDataUpdated[histDataUpdated.Date>=currentTime-datetime.timedelta(minutes=interval)]
     return histDataUpdated
 
+def clear_all():
+    gl = globals().copy()
+    for var in gl:
+        if var[0] == '_': continue
+        if 'func' in str(globals()[var]): continue
+        if 'module' in str(globals()[var]): continue
+
+        del globals()[var]
 
 class Trading_Gui:
     def __init__(self, top=None):
@@ -57,12 +65,11 @@ class Trading_Gui:
         self.root = root
         self.style = ttk.Style()
         self.style.theme_use("vista")
-        #if sys.platform == "win32":
-        #    self.style.theme_use('winnative')
         self.style.configure('.',background=_bgcolor)
         self.style.configure('.',foreground=_fgcolor)
         self.style.configure('.',font="TkDefaultFont")
         self.style.map('.',background= [('selected', _compcolor), ('active',_ana2color)])
+        self.strategy= []
         self.showChart = False
         self.startTrading = False
         self.closeAll= False
@@ -165,7 +172,7 @@ class Trading_Gui:
         self.ticker.configure(takefocus="0")
 
         self.TLabel4 = Label(self.TFrame3)
-        self.TLabel4.place(relx=0.19, rely=0.18, height=19, width=75)
+        self.TLabel4.place(relx=0.18, rely=0.18, height=19, width=75)
         self.TLabel4.configure(font=('Helvetica', 8))
         self.TLabel4.configure(foreground="#075bb8")
         self.TLabel4.configure(relief=FLAT)
@@ -173,7 +180,7 @@ class Trading_Gui:
 
         self.StopLossEdge = Entry(self.TFrame3)
         self.StopLossEdge.insert(END, str(10))
-        self.StopLossEdge.place(relx=0.29, rely=0.18, relheight=0.44, relwidth=0.09)
+        self.StopLossEdge.place(relx=0.28, rely=0.18, relheight=0.44, relwidth=0.09)
         self.StopLossEdge.configure(font=('Helvetica', 10))
         self.StopLossEdge.configure(background="white")
         self.StopLossEdge.configure(font="TkTextFont")
@@ -186,7 +193,7 @@ class Trading_Gui:
         self.StopLossEdge.configure(takefocus="0")
 
         self.TLabel5 = Label(self.TFrame3)
-        self.TLabel5.place(relx=0.41, rely=0.2, height=19, width=65)
+        self.TLabel5.place(relx=0.39, rely=0.2, height=19, width=65)
         self.TLabel5.configure(font=('Helvetica', 8))
         self.TLabel5.configure(foreground="#075bb8")
         self.TLabel5.configure(relief=FLAT)
@@ -194,8 +201,8 @@ class Trading_Gui:
         self.TLabel5.configure(text='''EntryEdge:''')
 
         self.EntryEdge = Entry(self.TFrame3)
-        self.EntryEdge.insert(END, str(0))
-        self.EntryEdge.place(relx=0.49, rely=0.15, relheight=0.44, relwidth=0.09)
+        self.EntryEdge.insert(END, str(1))
+        self.EntryEdge.place(relx=0.47, rely=0.15, relheight=0.44, relwidth=0.09)
         self.EntryEdge.configure(background="white")
         self.EntryEdge.configure(font="TkTextFont")
         self.EntryEdge.configure(foreground="black")
@@ -207,7 +214,7 @@ class Trading_Gui:
         self.EntryEdge.configure(takefocus="0")
 
         self.TLabel6 = Label(self.TFrame3)
-        self.TLabel6.place(relx=0.62, rely=0.2, height=19, width=85)
+        self.TLabel6.place(relx=0.58, rely=0.2, height=19, width=85)
         self.TLabel6.configure(font=('Helvetica', 8))
         self.TLabel6.configure(foreground="#075bb8")
         self.TLabel6.configure(relief=FLAT)
@@ -216,7 +223,7 @@ class Trading_Gui:
 
         self.OpenTradesLimit = Entry(self.TFrame3)
         self.OpenTradesLimit.insert(END, str(4))
-        self.OpenTradesLimit.place(relx=0.73, rely=0.15, relheight=0.44, relwidth=0.09)
+        self.OpenTradesLimit.place(relx=0.69, rely=0.15, relheight=0.44, relwidth=0.09)
         self.OpenTradesLimit.configure(background="white")
         self.OpenTradesLimit.configure(font="TkTextFont")
         self.OpenTradesLimit.configure(foreground="black")
@@ -226,6 +233,28 @@ class Trading_Gui:
         self.OpenTradesLimit.configure(selectbackground="#c4c4c4")
         self.OpenTradesLimit.configure(selectforeground="black")
         self.OpenTradesLimit.configure(takefocus="0")
+
+
+        self.TLabel7 = Label(self.TFrame3)
+        self.TLabel7.place(relx=0.79, rely=0.2, height=19, width=85)
+        self.TLabel7.configure(font=('Helvetica', 8))
+        self.TLabel7.configure(foreground="#075bb8")
+        self.TLabel7.configure(relief=FLAT)
+        self.TLabel7.configure(takefocus="0")
+        self.TLabel7.configure(text='''Maintenance:''')
+
+        self.Maintenance = Entry(self.TFrame3)
+        self.Maintenance.insert(END, str(1))
+        self.Maintenance.place(relx=0.89, rely=0.15, relheight=0.44, relwidth=0.09)
+        self.Maintenance.configure(background="white")
+        self.Maintenance.configure(font="TkTextFont")
+        self.Maintenance.configure(foreground="black")
+        self.Maintenance.configure(highlightbackground="#d9d9d9")
+        self.Maintenance.configure(highlightcolor="black")
+        self.Maintenance.configure(insertbackground="black")
+        self.Maintenance.configure(selectbackground="#c4c4c4")
+        self.Maintenance.configure(selectforeground="black")
+        self.Maintenance.configure(takefocus="0")
 
 
         self.style.configure('Treeview.Heading',  font="TkDefaultFont")
@@ -443,8 +472,15 @@ class Trading_Gui:
 
     def stopTrade(self) :
         self.root.update()
-        self.startTrading = False
-        self.output.log(crayons.green("End trading.........."))
+        try:
+            opPos= self.strategy.openedPositions
+        except:
+            opPos= []
+        if len(opPos)>0:
+            messagebox.showinfo("Warning", "There are opened position. Close all before stopping trading!")
+        else:
+            self.startTrading = False
+            self.output.log(crayons.green("End trading.........."))
 
     def closeAllPositions(self) :
         self.root.update()
@@ -497,9 +533,12 @@ class Trading_Gui:
         lengthMA = 50
         error=False
         self.stopRunning= False
+        self.numberOfTrades= 0
         try:
             data = BotGetData(pair, period)
+            historical = data.historicalData
         except Exception as e:
+            historical = []
             messagebox.showinfo("Error", e)
             error= True
         try:
@@ -517,14 +556,17 @@ class Trading_Gui:
             openPosLimit= int(self.OpenTradesLimit.get())
             if openPosLimit<=0:
                 messagebox.showinfo("Error", "Wrong openPosLimit input. Must be integer>0.")
+                openPosLimit= 1
         except:
             messagebox.showinfo("Error", "Wrong openPosLimit input. Must be integer.")
             error= True
         try:
-            historical = data.historicalData
+            timePosEdge= int(self.Maintenance.get())
+            if timePosEdge<0:
+                messagebox.showinfo("Error", "Wrong Maintenance input. Must be integer>=0.")
+                timePosEdge= 1
         except:
-            messagebox.showinfo("Error", "Could`t get data from Poloniex!")
-            historical= []
+            messagebox.showinfo("Error", "Wrong Maintenance input. Must be integer.")
             error= True
         if not error:
             prices = historical.Price.tolist()
@@ -534,42 +576,47 @@ class Trading_Gui:
                 print("Not enough historical data for MA=" + str(lengthMA))
                 lengthMA = len(prices)
 
-            strategy = BotStrategy(prices=prices, pair=pair, lengthMA=lengthMA, \
-                                   openPosLimit=openPosLimit, stopLossEdge=stopLossEdge, entryEdge=entryEdge)
-
+            self.strategy = BotStrategy(prices=prices, pair=pair, lengthMA=lengthMA, \
+                                        openPosLimit=openPosLimit, stopLossEdge=stopLossEdge, \
+                                        entryEdge=entryEdge, timePosEdge=timePosEdge)
             while True:
                 try:
                     if self.stopRunning:
-                        self.saveTradeHistory(strategy=strategy)
+                        self.startTrading = False
+                        self.saveTradeHistory(strategy=self.strategy)
+                        self.Scrolledtreeview1.delete(*self.Scrolledtreeview1.get_children())
+                        self.Scrolledtreeview2.delete(*self.Scrolledtreeview2.get_children())
+                        self.strategy.closeAll()
+                        self.strategy.clearExecutions()
                         break
                     data.updateData()
                     lastPairPrice = data.lastPrice
                     prices.append(lastPairPrice)
                     prices = prices[-lengthMA:]
-                    strategy.tick(lastPairPrice, self.startTrading)
-                    executions = strategy.allExecutions.execData
-                    trades = strategy.allTrades.tradesData
+                    self.strategy.tick(lastPairPrice, self.startTrading)
+                    executions = self.strategy.allExecutions.execData
+                    trades = self.strategy.allTrades.tradesData
                     histDataUpdated = chartHorizon(histDataUpdated=data.historicalData, interval=15)
-                    openedPositions= strategy.openedPositions
+                    openedPositions= self.strategy.openedPositions
                     self.insertDataTrades(trades)
                     self.insertOpenData(openedPositions)
                     self.tradesCount.delete(1.0, END)
                     self.tradesCount.insert(END, str(len(trades)))
                     self.totalPnl.delete(1.0, END)
-                    self.totalPnl.insert(END, str(round(strategy.totalPnl,1)))
+                    self.totalPnl.insert(END, str(round(self.strategy.totalPnl,1)))
                     if self.closeAll:
-                        strategy.closeAll()
-                        self.saveTradeHistory(strategy=strategy)
+                        self.strategy.closeAll()
+                        self.saveTradeHistory(strategy=self.strategy)
                     if self.showChart:
                         self.liveChartObject.botLiveChart(x=histDataUpdated.Date, y=histDataUpdated.Price, \
-                                            tradesLive=executions, lastTradePnl=strategy.lastTradePnl, \
-                                            totalPnl=strategy.totalPnl, percentChange=data.percentChange)
+                                            tradesLive=executions, lastTradePnl=self.strategy.lastTradePnl, \
+                                            totalPnl=self.strategy.totalPnl, percentChange=data.percentChange)
                     self.root.update()
 
                 except Exception as e:
                     messagebox.showinfo("Error", str(e))
-                    strategy.closeAll()
-                    self.saveTradeHistory(strategy=strategy)
+                    self.strategy.closeAll()
+                    self.saveTradeHistory(strategy=self.strategy)
                     break
 
 

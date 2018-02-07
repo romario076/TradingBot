@@ -4,6 +4,7 @@ from botexecutions import executionsData
 from bottrades import tradesData
 from botMetrics import botMetrics
 import pandas as pd
+import datetime
 import colorama
 import crayons
 colorama.init()
@@ -11,7 +12,7 @@ colorama.init()
 
 class BotStrategy(object):
 
-    def __init__(self, prices, pair, lengthMA, openPosLimit, stopLossEdge, entryEdge):
+    def __init__(self, prices, pair, lengthMA, openPosLimit, stopLossEdge, entryEdge, timePosEdge):
         self.output = BotLog()
         self.prices = prices
         self.closes = []  # Needed for Momentum Indicator
@@ -22,8 +23,8 @@ class BotStrategy(object):
         self.side= ""
         self.lengthMA= lengthMA
         self.movAverage= 0
-        self.expMovAverageSlow= 0
-        self.expMovAverageFast = 0
+        self.expMovAverage= 0
+        self.strategyTradingMetric= 0
         self.allExecutions = executionsData()
         self.allTrades = tradesData()
         self.metrics= botMetrics()
@@ -32,6 +33,7 @@ class BotStrategy(object):
         self.totalPnl=0
         self.stopLossEdge= stopLossEdge
         self.entryEdge= entryEdge
+        self.timePosEdge= timePosEdge
 
     def movingAverage(self, data, period):
         ma= 0
@@ -44,6 +46,7 @@ class BotStrategy(object):
         self.prices.append(self.currentPrice)
         self.movAverage= self.metrics.movingAverage(data=self.prices, period=self.lengthMA)
         self.expMovAverage = self.metrics.EMA(prices=self.prices, period=self.lengthMA)
+        self.strategyTradingMetric= self.expMovAverage
         self.output.log("Price: " + str(round(price, 3)) + "  MA: " + str(round(self.movAverage ,3)) + \
                  "  EMA: "+str(round(self.expMovAverage ,3)))
 
@@ -55,24 +58,26 @@ class BotStrategy(object):
             self.updateOpenPositions()
 
     def evaluatePositions(self):
+        currentTime= datetime.datetime.now()
         openTrades = []
         for trade in self.trades:
             if (trade.status == "OPEN"):
                 openTrades.append(trade)
 
         if (len(openTrades) < self.numSimulTrades):
-            if ((self.movAverage-self.currentPrice)> self.entryEdge):
+            if ((self.strategyTradingMetric-self.currentPrice)> self.entryEdge):
                 btrade= BotTrade(self.currentPrice, stopLossEdge=self.stopLossEdge)
                 self.trades.append(btrade)
                 self.updateExecutions(trade=btrade, executionTime=btrade.entryTime, executionPrice=btrade.entryPrice)
 
         for trade in openTrades:
-            if (self.currentPrice > self.movAverage):
-                trade.close(self.currentPrice)
-                self.updateExecutions(trade=trade, executionTime=trade.exitTime, executionPrice=trade.exitPrice)
-                self.updateTrades(trade=trade)
-                self.lastTradePnl= trade.pnl
-                self.totalPnl= self.totalPnl+self.lastTradePnl
+            if (self.currentPrice > self.strategyTradingMetric):
+                if (currentTime-trade.entryTime).seconds>self.timePosEdge:
+                    trade.close(self.currentPrice)
+                    self.updateExecutions(trade=trade, executionTime=trade.exitTime, executionPrice=trade.exitPrice)
+                    self.updateTrades(trade=trade)
+                    self.lastTradePnl= trade.pnl
+                    self.totalPnl= self.totalPnl+self.lastTradePnl
 
     def closeAll(self):
         for trade in self.trades:
@@ -83,6 +88,7 @@ class BotStrategy(object):
                 self.lastTradePnl = trade.pnl
                 self.totalPnl = self.totalPnl + self.lastTradePnl
         self.trades= []
+        self.openedPositions =[]
 
 
     def updateExecutions(self, trade, executionTime, executionPrice):
@@ -136,3 +142,7 @@ class BotStrategy(object):
         if len(temp) > 0:
             temp.columns = ["EntryTime", "ExitTime", "Pair", "EntryPrice", "ExitPrice", "Side", "Pnl"]
         return temp
+
+    def clearExecutions(self):
+        self.allExecutions = executionsData()
+        self.allTrades = tradesData()
