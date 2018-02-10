@@ -4,12 +4,13 @@ Retrieves data using poloniex api.
 
 ### Availble:
 * Control trading sessinon via Start and Stop buttons.
+* Immediate close all opened positions, or stop session Together with closing all positions.
 * Real time interactive chart with trading strategy executions.
 * Real time updating table with opened postions and all trades.
 * Trading history storing into csv file.
 * Real time messages from exchange and from platform in console.
 
-Easy to change trading logic, available different markets indicators to use in strategy module(botsrategy.py).
+Easy to change trading logic, available different markets indicators to use in strategy module(BotGetData.py).
 For using neccessary to have your own id and key from poloniex api.
 <hr>
 
