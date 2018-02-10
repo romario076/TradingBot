@@ -38,4 +38,4 @@ python Gui.py
 
 ### Trading example:
 
-![alt text](https://user-images.githubusercontent.com/10981310/35833395-b5d65d48-0ad9-11e8-821b-5416d9e04893.PNG)
+![alt text](https://user-images.githubusercontent.com/10981310/36055671-a45e4e42-0e06-11e8-9d3e-875830092582.PNG)
