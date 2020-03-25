@@ -34,7 +34,8 @@ python Gui.py
 ### Usage:
 ```
 Press Run button on gui.
-Data collection from exchange poloniex will be on, after that you can press StartTrade button, to observer trading simulation with specified logic in BotStrategy.py
+Data collection from exchange poloniex will be on, after that you can press StartTrade button.
+Trading simulation will be started with specified logic in BotStrategy.py
 ```
 
 <hr>
