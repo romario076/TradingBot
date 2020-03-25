@@ -12,6 +12,7 @@ Retrieves data using poloniex api.
 
 Easy to change trading logic, available different markets indicators to use in strategy module(BotGetData.py).
 For using neccessary to have your own id and key from poloniex api.
+Go to BotGetData.py, 14 row and put your keys Poloniex('your-Api-Key-Here-xxxx','yourSecretKeyHere123456789').
 <hr>
 
 ### Requiremets:
@@ -26,15 +27,16 @@ For using neccessary to have your own id and key from poloniex api.
 ```
 pip install https://github.com/s4w3d0ff/python-poloniex/archive/v0.4.7.zip
 ```
-### Usage:
-```
-import poloniex
-polo = poloniex.Poloniex('your-Api-Key-Here-xxxx','yourSecretKeyHere123456789')
-```
 ### Run application:
 ```From cmd:
 python Gui.py
 ```
+### Usage:
+```
+Press Run button on gui.
+Data collection from exchange poloniex will be on, after that you can press StartTrade button, to observer trading simulation with specified logic in BotStrategy.py
+```
+
 <hr>
 
 ### Trading example:
